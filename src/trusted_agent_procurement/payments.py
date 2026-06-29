@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import uuid
 from typing import Protocol
 
@@ -68,4 +69,35 @@ class StripeProvider:
             amount_usd=quote.total_usd,
             status=intent.status,
             hosted_url=None,
+        )
+
+
+class HermesStripeSkillsProvider:
+    """Placeholder for a Hermes Stripe Skills payment/provisioning adapter.
+
+    The public demo keeps using MockStripeProvider. Once the Hermes Stripe
+    Skills contract is available, wire the SDK or HTTP client inside
+    charge_procurement and keep this class behind explicit configuration.
+    """
+
+    provider_name = "hermes_stripe_skills_placeholder"
+
+    def __init__(self, *, endpoint: str, api_key: str):
+        self.endpoint = endpoint
+        self.api_key = api_key
+
+    @classmethod
+    def from_env(cls) -> "HermesStripeSkillsProvider":
+        endpoint = os.getenv("HERMES_STRIPE_SKILLS_ENDPOINT")
+        api_key = os.getenv("HERMES_STRIPE_SKILLS_API_KEY")
+        if not endpoint:
+            raise RuntimeError("Missing required environment variable: HERMES_STRIPE_SKILLS_ENDPOINT")
+        if not api_key:
+            raise RuntimeError("Missing required environment variable: HERMES_STRIPE_SKILLS_API_KEY")
+        return cls(endpoint=endpoint, api_key=api_key)
+
+    def charge_procurement(self, *, buyer_agent: str, quote: QuoteOption) -> PaymentReceipt:
+        raise RuntimeError(
+            "HermesStripeSkillsProvider is a placeholder. Wire Hermes Stripe Skills "
+            "before enabling it in production."
         )

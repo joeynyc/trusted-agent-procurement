@@ -7,6 +7,16 @@ from dataclasses import asdict
 
 from agentid_verify import AgentIdError, PassportClaims, verify_passport
 
+from .integrations import (
+    AgentSkillsProvider,
+    LocalRuntimeProvider,
+    LocalSafetyProvider,
+    MockCloudForgeProvisioningProvider,
+    ProvisioningProvider,
+    RuntimeProvider,
+    SafetyProvider,
+    StaticAgentSkillsProvider,
+)
 from .models import AuditLog, ProcurementRequest, ProcurementResult, QuoteOption
 from .payments import MockStripeProvider, PaymentProvider
 
@@ -38,8 +48,19 @@ class ProcurementDenied(Exception):
 class CloudForgeProcurementDesk:
     """Business-facing procurement desk adapted from the CloudForge A2A front desk."""
 
-    def __init__(self, payment_provider: PaymentProvider | None = None):
+    def __init__(
+        self,
+        payment_provider: PaymentProvider | None = None,
+        runtime_provider: RuntimeProvider | None = None,
+        safety_provider: SafetyProvider | None = None,
+        skills_provider: AgentSkillsProvider | None = None,
+        provisioning_provider: ProvisioningProvider | None = None,
+    ):
         self.payment_provider = payment_provider or MockStripeProvider()
+        self.runtime_provider = runtime_provider or LocalRuntimeProvider()
+        self.safety_provider = safety_provider or LocalSafetyProvider()
+        self.skills_provider = skills_provider or StaticAgentSkillsProvider()
+        self.provisioning_provider = provisioning_provider or MockCloudForgeProvisioningProvider()
 
     def agent_card(self) -> dict:
         """Return the A2A-style agent card advertised to buyer agents."""
@@ -59,20 +80,18 @@ class CloudForgeProcurementDesk:
                     "url": "http://127.0.0.1:9998/",
                 }
             ],
-            "skills": [
-                {
-                    "id": "trusted_gpu_procurement",
-                    "name": "Trusted GPU Procurement",
-                    "description": "Quote, authorize, pay for, and provision GPU capacity.",
-                    "tags": ["gpu", "procurement", "stripe", "agentid", "a2a"],
-                },
-                {
-                    "id": "agent_passport_verification",
-                    "name": "Agent Passport Verification",
-                    "description": "Verify Ed25519 agent passports and required capabilities.",
-                    "tags": ["identity", "did", "ed25519", "capabilities"],
-                },
-            ],
+            "skills": [skill.to_agent_card() for skill in self.skills_provider.list_skills()],
+            "integration_status": self.integration_status(),
+        }
+
+    def integration_status(self) -> dict:
+        """Return configured integration providers without claiming external services are live."""
+        return {
+            "payment_provider": getattr(self.payment_provider, "provider_name", type(self.payment_provider).__name__),
+            "runtime_provider": self.runtime_provider.provider_name,
+            "safety_provider": self.safety_provider.provider_name,
+            "skills_provider": self.skills_provider.provider_name,
+            "provisioning_provider": self.provisioning_provider.provider_name,
         }
 
     def quote(self, request: ProcurementRequest) -> QuoteOption:
@@ -106,6 +125,15 @@ class CloudForgeProcurementDesk:
         self._require_capabilities(claims, audit)
         self._require_budget(claims, request.max_budget_usd, audit)
 
+        plan = self.runtime_provider.plan_procurement(request)
+        audit.record("runtime_plan_created", plan=asdict(plan))
+
+        safety = self.safety_provider.evaluate_procurement(request=request, plan=plan)
+        audit.record("safety_gate_evaluated", decision=asdict(safety))
+        if not safety.allowed:
+            audit.record("procurement_denied", reason="safety_gate_denied", detail=safety.reason)
+            raise ProcurementDenied(f"safety gate denied procurement: {safety.reason}")
+
         quote = self.quote(request)
         audit.record("quote_generated", quote=asdict(quote))
 
@@ -126,13 +154,14 @@ class CloudForgeProcurementDesk:
         )
         audit.record("stripe_payment_triggered", payment=asdict(payment))
 
-        resource_id = "gpu-" + hashlib.sha256(f"{quote.sku}:{payment.payment_id}".encode()).hexdigest()[:12]
-        onboarding_url = f"https://cloudforge.example/onboarding/{resource_id}"
+        provisioning = self.provisioning_provider.provision(
+            buyer_agent=request.buyer_agent,
+            quote=quote,
+            payment=payment,
+        )
         audit.record(
             "resource_provisioned",
-            resource_id=resource_id,
-            onboarding_url=onboarding_url,
-            region=quote.region,
+            provisioning=asdict(provisioning),
         )
 
         return ProcurementResult(
@@ -140,8 +169,8 @@ class CloudForgeProcurementDesk:
             verified_did=claims.sub,
             selected_quote=quote,
             payment=payment,
-            provisioned_resource_id=resource_id,
-            onboarding_url=onboarding_url,
+            provisioned_resource_id=provisioning.resource_id,
+            onboarding_url=provisioning.onboarding_url,
             audit_log=audit.events,
         )
 

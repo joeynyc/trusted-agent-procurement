@@ -38,10 +38,15 @@ def test_successful_procurement_verifies_identity_pays_and_provisions():
         "passport_verified",
         "capabilities_authorized",
         "budget_authorized",
+        "runtime_plan_created",
+        "safety_gate_evaluated",
         "quote_generated",
         "stripe_payment_triggered",
         "resource_provisioned",
     ]
+    assert result.audit_log[4]["plan"]["provider"] == "local_runtime"
+    assert result.audit_log[5]["decision"]["provider"] == "local_safety"
+    assert result.audit_log[-1]["provisioning"]["provider"] == "cloudforge_mock_provisioning"
 
 
 def test_missing_capability_blocks_procurement():

@@ -7,14 +7,14 @@ test:
 	PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 uv run pytest
 
 demo:
-	uv run trusted-agent-demo --fast
+	PYTHONPATH=src uv run trusted-agent-demo --fast
 
 server:
 	uv run trusted-agent-server
 
 smoke:
 	PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 uv run pytest
-	uv run trusted-agent-demo --fast
+	PYTHONPATH=src uv run trusted-agent-demo --fast
 
 clean:
 	rm -rf .pytest_cache build dist src/*.egg-info
