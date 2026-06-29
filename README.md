@@ -1,6 +1,6 @@
 # Trusted Agent Procurement
 
-![Trusted Agent Procurement hero](docs/assets/repo-hero.png)
+![Trusted Agent Procurement banner](docs/assets/hackathon-banner.png)
 
 Autonomous procurement for business agents.
 
