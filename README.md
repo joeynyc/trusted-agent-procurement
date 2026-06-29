@@ -10,9 +10,9 @@ The demo uses a CloudForge GPU provider front desk and a Nexus buyer agent. The 
 
 ## Demo Video
 
-[![Trusted Agent Procurement demo preview](docs/assets/demo-preview.gif)](docs/assets/demo.mp4)
+[![Trusted Agent Procurement demo preview](docs/assets/demo-preview-mono.gif)](docs/assets/demo-mono.mp4)
 
-[Watch the full MP4 demo](docs/assets/demo.mp4).
+[Watch the full MP4 demo](docs/assets/demo-mono.mp4).
 
 ## Why It Matters
 
@@ -107,8 +107,8 @@ src/agentid_verify/                 # Local Python verifier adapted from agentid
 src/trusted_agent_procurement/      # CloudForge desk, demo, server, payments
 tests/                              # Identity, procurement, and server coverage
 examples/jsonrpc_client.py          # Minimal A2A-style JSON-RPC client
-docs/assets/demo.mp4                # Demo video
-docs/assets/demo-preview.gif        # Animated README preview
+docs/assets/demo-mono.mp4           # Demo video
+docs/assets/demo-preview-mono.gif   # Animated README preview
 docs/architecture.md                # Technical architecture notes
 docs/demo-script.md                 # 1-3 minute video recording script
 .github/workflows/ci.yml            # Test and demo smoke workflow
