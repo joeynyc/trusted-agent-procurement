@@ -9,3 +9,5 @@ build/
 .env
 .DS_Store
 .ruff_cache/
+docs/demo-video*.mp4
+docs/demo-poster*.png
