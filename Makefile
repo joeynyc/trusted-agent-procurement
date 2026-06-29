@@ -4,7 +4,7 @@ setup:
 	uv sync --extra dev
 
 test:
-	uv run pytest
+	PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 uv run pytest
 
 demo:
 	uv run trusted-agent-demo --fast
@@ -13,7 +13,7 @@ server:
 	uv run trusted-agent-server
 
 smoke:
-	uv run pytest
+	PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 uv run pytest
 	uv run trusted-agent-demo --fast
 
 clean:

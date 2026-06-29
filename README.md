@@ -8,6 +8,12 @@ Trusted Agent Procurement lets an AI buyer agent prove identity, verify spend au
 
 The demo uses a CloudForge GPU provider front desk and a Nexus buyer agent. The buyer presents a signed `AgentPassport`, CloudForge checks capabilities and budget, then completes the procurement flow.
 
+## Demo Video
+
+[![Watch the Trusted Agent Procurement demo](docs/assets/demo-poster.png)](docs/assets/demo.mp4)
+
+Click the preview to watch the demo.
+
 ## Why It Matters
 
 Agents that run real operations need to buy software, infrastructure, data, and services. API keys are not enough for that world. Vendors need to know:
@@ -76,7 +82,7 @@ uv run python examples/jsonrpc_client.py
 ## Test
 
 ```bash
-uv run pytest
+PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 uv run pytest
 ```
 
 Or run the full smoke check:
@@ -101,6 +107,7 @@ src/agentid_verify/                 # Local Python verifier adapted from agentid
 src/trusted_agent_procurement/      # CloudForge desk, demo, server, payments
 tests/                              # Identity, procurement, and server coverage
 examples/jsonrpc_client.py          # Minimal A2A-style JSON-RPC client
+docs/assets/demo.mp4                # Demo video
 docs/architecture.md                # Technical architecture notes
 docs/demo-script.md                 # 1-3 minute video recording script
 .github/workflows/ci.yml            # Test and demo smoke workflow
