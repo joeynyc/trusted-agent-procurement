@@ -1,5 +1,7 @@
 # Trusted Agent Procurement
 
+![Trusted Agent Procurement hero](docs/assets/repo-hero.png)
+
 Autonomous procurement for business agents.
 
 Trusted Agent Procurement lets an AI buyer agent prove identity, verify spend authority, negotiate GPU capacity, trigger a Stripe-style payment, and receive provisioning with an audit trail.
