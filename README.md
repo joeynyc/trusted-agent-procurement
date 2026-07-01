@@ -155,3 +155,7 @@ assets/demo-preview.gif             # Animated README preview
 - NVIDIA and Hermes adapters are explicit placeholders until their exact APIs are connected.
 - `agentid_verify` verifies AgentPassport-style DID/JWT credentials.
 - The CloudForge procurement desk follows the A2A front desk pattern.
+
+## Docs
+
+- [Architecture notes](docs/architecture.md)
