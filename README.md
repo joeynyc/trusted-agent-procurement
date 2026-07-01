@@ -1,6 +1,6 @@
 # Trusted Agent Procurement
 
-![Trusted Agent Procurement banner](docs/assets/hackathon-banner.png)
+![Trusted Agent Procurement banner](assets/hackathon-banner.png)
 
 Autonomous procurement for business agents.
 
@@ -12,9 +12,9 @@ For judges: start with [Hackathon Submission](HACKATHON_SUBMISSION.md), then run
 
 ## Demo Video
 
-[![Trusted Agent Procurement demo preview](docs/assets/demo-preview-mono.gif)](docs/assets/demo-mono.mp4)
+[![Trusted Agent Procurement demo preview](assets/demo-preview.gif)](assets/demo.mp4)
 
-[Watch the full MP4 demo](docs/assets/demo-mono.mp4).
+[Watch the full MP4 demo](assets/demo.mp4).
 
 ## Why It Matters
 
@@ -138,14 +138,12 @@ Endpoints:
 ## Repository Layout
 
 ```text
-src/agentid_verify/                 # Local Python verifier adapted from agentid
+src/agentid_verify/                 # Local verifier for AgentPassport-style DID/JWT credentials
 src/trusted_agent_procurement/      # CloudForge desk, demo, server, payments
 tests/                              # Identity, procurement, and server coverage
 examples/jsonrpc_client.py          # Minimal A2A-style JSON-RPC client
-docs/assets/demo-mono.mp4           # Demo video
-docs/assets/demo-preview-mono.gif   # Animated README preview
-docs/architecture.md                # Technical architecture notes
-docs/demo-script.md                 # 1-3 minute video recording script
+assets/demo.mp4                     # Demo video
+assets/demo-preview.gif             # Animated README preview
 .github/workflows/ci.yml            # Test and demo smoke workflow
 ```
 
@@ -155,10 +153,5 @@ docs/demo-script.md                 # 1-3 minute video recording script
 - `StripeProvider` is the upgrade path for real PaymentIntents.
 - `integrations.py` defines runtime, safety, skills, and provisioning provider boundaries.
 - NVIDIA and Hermes adapters are explicit placeholders until their exact APIs are connected.
-- `agentid_verify` is adapted from the `agentid` passport verifier.
+- `agentid_verify` verifies AgentPassport-style DID/JWT credentials.
 - The CloudForge procurement desk follows the A2A front desk pattern.
-
-## Docs
-
-- [Architecture notes](docs/architecture.md)
-- [Video demo script](docs/demo-script.md)
